@@ -14,13 +14,22 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include, re_path
+from django.urls import path, include
+from rest_framework_swagger.views import get_swagger_view
+
+schema_view = get_swagger_view(title="Notes API")
 
 urlpatterns = [
-    path('grappelli/', include('grappelli.urls')), # grappelli URLS
-    re_path(r'^oauth/', include('social_django.urls')),
-    re_path(r'^admin/', admin.site.urls),
-    path('projects/', include('projects.urls')),
+    # Admin
+    path('grappelli/', include('grappelli.urls')),
+    path('admin/', admin.site.urls),
+    # Apps
+    path('', include('projects.urls')),
     path('blog/', include('blog.urls')),
-    re_path(r'^', include('users.urls'))
+    path('', include('users.urls')),
+    # API
+    path('api/', include('notes.urls')),
+    path('auth/', include('rest_framework.urls')),
+    path('api/jwtauth/', include('jwtauth.urls'), name='jwtauth'),
+    path('api/docs/', schema_view),
 ]
